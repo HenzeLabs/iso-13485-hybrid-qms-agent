@@ -110,20 +110,24 @@ Implement a CAPA management system that:
 ## Verification Results
 
 - **Test Execution Date:** 2025-12-09
-- **Verification Status:** 🔴 **BLOCKED** - Critical security vulnerability found
+- **Verification Status:** ✅ **PASS** - All tests passing, security vulnerability RESOLVED
 - **Security Audit:** [SECURITY-AUDIT-2025-12-09.md](../verification/SECURITY-AUDIT-2025-12-09.md)
-- **Blocking Issue:** VULN-001 - SQL Injection vulnerability in capa_ingestion.py
-- **Unit Test Results:** ✅ 14/14 tests passing (functional tests only, security tests pending)
+- **Security Status:** VULN-001 SQL Injection - **RESOLVED** ✅
+- **Test Results:** ✅ **20/20 tests passing (100% pass rate)**
+  - Functional Tests: 14/14 PASS
+  - Security Tests: 6/6 PASS
 - **Evidence:**
-  - Debug logging implemented in `CAPAIngestion.create_capa` (line 58-64)
+  - Debug logging implemented in `CAPAIngestion.create_capa` (line 62-67)
   - Debug logging implemented in `QMSBigQueryClient.insert_rows` (line 39-54)
+  - Parameterized queries implemented in all SQL operations (VULN-001 fix)
+  - datetime.utcnow() deprecation fixed → datetime.now(UTC)
   - Unit tests executed and verified:
     - **CAPA Ingestion Tests:** 10/10 PASS
       - TC-8.5.2-001: CAPA creation with valid data ✅
       - TC-8.5.2-002: Required field validation ✅
       - TC-8.5.2-003: Severity validation ✅
       - TC-8.5.2-004: BigQuery error handling ✅
-      - TC-8.5.2-005: Status update verification ✅
+      - TC-8.5.2-005: Status update verification with parameterized queries ✅
       - TC-8.5.2-006: Action item creation ✅
       - TC-8.5.2-007: Approval workflow ✅
       - TC-8.5.2-008: End-to-end workflow ✅
@@ -134,20 +138,22 @@ Implement a CAPA management system that:
       - TC-BQ-002: Debug logging validation ✅
       - TC-BQ-003: Error handling ✅
       - TC-BQ-004: Query functionality ✅
+    - **Security Tests (NEW):** 6/6 PASS
+      - TC-SEC-001: SQL injection prevention - update_capa_status ✅
+      - TC-SEC-002: SQL injection prevention - update_capa_analysis ✅
+      - TC-SEC-003: SQL injection prevention - complete_capa_action ✅
+      - TC-SEC-004: SQL injection prevention - get_capa_details ✅
+      - TC-SEC-005: No f-string SQL with user input ✅
+      - TC-SEC-006: Datetime deprecation fixed ✅
 - **Verified By:** Engineering Team
-- **Issues Found:**
-  - 🔴 **CRITICAL:** SQL Injection vulnerability in update_capa_analysis(), complete_capa_action(), update_capa_status(), get_capa_details()
-  - Initial test suite had API signature mismatch - RESOLVED
-  - Tests corrected to match actual implementation
-  - Mock isolation properly configured
-  - Debug logging verified operational
-- **Required Actions Before Production:**
-  1. Fix SQL injection vulnerabilities using parameterized queries
-  2. Add security test cases for SQL injection attempts
-  3. Re-run full verification suite
-  4. Update security audit status to RESOLVED
-- **Test Command:** `pytest device/tests/test_capa_ingestion.py device/tests/test_bigquery_client.py -v`
-- **Test Output:** All functional tests pass with proper mock isolation (security tests pending)
+- **Security Fix Implemented:**
+  - ✅ All SQL queries refactored to use BigQuery parameterized queries
+  - ✅ ScalarQueryParameter used for all user inputs
+  - ✅ No direct string interpolation in WHERE clauses
+  - ✅ Attack vectors tested: DROP TABLE, DELETE, UPDATE injection attempts
+  - ✅ All attacks prevented by parameterization
+- **Test Command:** `pytest device/tests/test_capa_ingestion.py device/tests/test_bigquery_client.py device/tests/test_sql_injection_security.py -v`
+- **Test Output:** 20/20 tests passing, no warnings (except non-security items)
 
 ## Validation Evidence
 
