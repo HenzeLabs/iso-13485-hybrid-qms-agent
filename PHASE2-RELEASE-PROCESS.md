@@ -1,7 +1,9 @@
 # ISO 13485 Phase 2 Release Process
+
 ## Step-by-Step Guide for Production Release
 
 ### Document Control
+
 - **Process Date:** 2025-12-09
 - **Release Version:** v1.0-phase2-release
 - **ISO 13485 Reference:** Clause 7.3.7 - Design transfer
@@ -20,24 +22,29 @@ This guide provides step-by-step instructions for completing the ISO 13485-compl
 Before proceeding, verify all prerequisites are met:
 
 - [x] **QA Approval Obtained**
+
   - Document: `documentation/DHF/reviews/QA-APPROVAL-PHASE2-2025-12-09.md`
   - Status: ✅ APPROVED
 
 - [x] **Validation Complete**
+
   - IQ: 11/11 tests passing (100%)
   - OQ: 20/20 tests passing (100%)
   - Total: 31/31 tests passing (100%)
 
 - [x] **Security Validated**
+
   - VULN-001: ✅ RESOLVED
   - Security tests: 6/6 passing (100%)
 
 - [x] **DHF Complete**
+
   - All required documents present
   - Version controlled
   - Reviewed and approved
 
 - [x] **DMR Updated**
+
   - Release record complete
   - Configuration documented
   - Ready for final commit update
@@ -57,24 +64,29 @@ This administrative step has been completed:
 ### Completed Activities:
 
 1. ✅ **QA Review Package Created**
+
    - Location: `documentation/DHF/validation/QA-REVIEW-PACKAGE-2025-12-09.md`
    - Status: All quality gates passed
 
 2. ✅ **Validation Evidence Reviewed**
+
    - IQ Report reviewed and approved
    - OQ Report reviewed and approved
    - Validation Summary reviewed and approved
 
 3. ✅ **Security Audit Reviewed**
+
    - VULN-001 resolution verified
    - Security test results validated
 
 4. ✅ **DHF Completeness Verified**
+
    - All required documents present
    - Version control confirmed
    - Traceability complete
 
 5. ✅ **QA Approval Issued**
+
    - Document: `documentation/DHF/reviews/QA-APPROVAL-PHASE2-2025-12-09.md`
    - Decision: ✅ APPROVED FOR RELEASE
    - Date: 2025-12-09
@@ -102,6 +114,7 @@ git branch
 ```
 
 **Expected Output:**
+
 - Current branch: `release/v1.0-phase2-dec9-2025-rc1`
 - Working directory clean
 
@@ -147,15 +160,18 @@ gh pr create \
 **Required Attachments:**
 
 1. **Validation Reports**
+
    - IQ Report: `documentation/DHF/validation/IQ-CAPA-System-2025-12-09.md`
    - OQ Report: `documentation/DHF/validation/OQ-CAPA-System-2025-12-09.md`
    - Validation Summary: `documentation/DHF/validation/VALIDATION-SUMMARY-CAPA-2025-12-09.md`
 
 2. **QA Documentation**
+
    - QA Approval: `documentation/DHF/reviews/QA-APPROVAL-PHASE2-2025-12-09.md`
    - QA Review Package: `documentation/DHF/validation/QA-REVIEW-PACKAGE-2025-12-09.md`
 
 3. **Technical Documentation**
+
    - Test Report: `documentation/DHF/verification/TEST-REPORT-8.5.2-2025-12-09.md`
    - Security Audit: `documentation/DHF/verification/SECURITY-AUDIT-2025-12-09.md`
    - Compliance Status: `documentation/DHF/ISO-13485-COMPLIANCE-STATUS.md`
@@ -171,16 +187,19 @@ gh pr create \
 Per `SCMP.md`, verify PR satisfies:
 
 - [x] **2 Reviewers Required**
+
   - Reviewer 1: Engineering Release Lead
   - Reviewer 2: QA Validation Lead
 
 - [x] **Status Checks Must Pass**
+
   - Unit tests: ✅ Passing
   - Security tests: ✅ Passing
   - Validation tests: ✅ Passing
   - Documentation checks: ✅ Passing
 
 - [x] **No Warnings**
+
   - Code quality: ✅ Clean
   - Security scans: ✅ Clean
   - Dependency checks: ✅ Clean
@@ -195,6 +214,7 @@ Per `SCMP.md`, verify PR satisfies:
 **For Reviewers:**
 
 1. **Engineering Reviewer:**
+
    - Review code changes
    - Verify test coverage
    - Confirm security fixes
@@ -208,6 +228,7 @@ Per `SCMP.md`, verify PR satisfies:
    - Verify risk controls
 
 **Approval Criteria:**
+
 - ✅ All validation evidence complete
 - ✅ QA formal approval obtained
 - ✅ All tests passing (100%)
@@ -710,15 +731,18 @@ If this release requires regulatory notification or filing:
 All phases of the ISO 13485 Phase 2 Release Process have been documented and are ready for execution:
 
 1. ✅ **QA Review & Approval** - COMPLETE
+
    - QA approval obtained
    - All quality gates passed
 
 2. 🔄 **Create Pull Request** - READY
+
    - Instructions provided
    - PR template prepared
    - Validation evidence attached
 
 3. 🔄 **Create Release Tag** - READY (post-merge)
+
    - Tag creation script provided
    - DMR update instructions included
 
@@ -739,6 +763,7 @@ All phases of the ISO 13485 Phase 2 Release Process have been documented and are
 ### Next Actions
 
 Execute remaining phases in order:
+
 1. Create PR (Phase 2)
 2. Wait for reviews and approval
 3. Merge PR
@@ -757,4 +782,4 @@ Execute remaining phases in order:
 
 ---
 
-*This process guide ensures compliance with ISO 13485:2016 design control requirements and provides complete traceability for the Phase 2 production release.*
+_This process guide ensures compliance with ISO 13485:2016 design control requirements and provides complete traceability for the Phase 2 production release._
