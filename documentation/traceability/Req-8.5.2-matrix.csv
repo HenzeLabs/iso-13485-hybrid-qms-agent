@@ -1,5 +1,5 @@
-Requirement ID,Requirement Description,Design Output,Code Location,Test Case,Test File,Verification Status,Validation Status,Risk ID,Release Version
-Req-8.5.2,CAPA Management System,WORKFLOW_API.md,device/src/capa_ingestion.py,TC-8.5.2-001,device/tests/test_capa_ingestion.py::test_create_capa_success,Pass,Pending,risk-CRM-005,v1.0-phase2-dec9-2025-rc1
+Requirement ID,Requirement Description,Design Output,Code Location,Test Case,Test File,Verification Status,Validation Status,Risk ID,Release Version,Security Status
+Req-8.5.2,CAPA Management System,WORKFLOW_API.md,device/src/capa_ingestion.py,TC-8.5.2-001,device/tests/test_capa_ingestion.py::test_create_capa_success,BLOCKED-SECURITY,Pending,risk-CRM-005,v1.0-phase2-dec9-2025-rc1,VULN-001-CRITICAL
 FR-8.5.2-001,Accept CAPA records with required fields,INGESTION_README.md,device/src/capa_ingestion.py:18-65,TC-8.5.2-001,device/tests/test_capa_ingestion.py::test_create_capa_success,Pass,Pending,risk-DATA-001,v1.0-phase2-dec9-2025-rc1
 FR-8.5.2-001,Validate required CAPA fields,INGESTION_README.md,device/src/capa_ingestion.py:18-65,TC-8.5.2-002,device/tests/test_capa_ingestion.py::test_create_capa_missing_department,Pass,Pending,risk-DATA-001,v1.0-phase2-dec9-2025-rc1
 FR-8.5.2-001,Validate CAPA severity,INGESTION_README.md,device/src/capa_ingestion.py:18-65,TC-8.5.2-003,device/tests/test_capa_ingestion.py::test_create_capa_invalid_severity,Pass,Pending,risk-DATA-001,v1.0-phase2-dec9-2025-rc1
