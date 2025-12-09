@@ -7,8 +7,10 @@
 - **Release Version:** v1.0-phase2-release
 - **Release Date:** 2025-12-09
 - **Release Branch:** release/v1.0-phase2-dec9-2025-rc1
+- **Baseline Commit:** dd33ed235e062432cec08984d6f6449d7277f20b
+- **Git Tag:** v1.0-phase2-release
 - **ISO 13485 Reference:** Clause 4.2.3 - Medical device file
-- **Status:** ✅ **QA APPROVED FOR PRODUCTION RELEASE**
+- **Status:** ✅ **RELEASED TO PRODUCTION**
 
 ---
 
@@ -38,9 +40,11 @@ This DMR documents the approved configuration baseline for Phase 2 production re
 ### Release Candidate: v1.0-phase2-dec9-2025-rc1
 
 - **Branch:** release/v1.0-phase2-dec9-2025-rc1
-- **Baseline Commit:** TBD (to be updated post-merge)
+- **Baseline Commit:** dd33ed235e062432cec08984d6f6449d7277f20b
 - **Build Date:** 2025-12-09
 - **QA Approval Date:** 2025-12-09
+- **Release Tag:** v1.0-phase2-release
+- **Merge to Main:** 2025-12-09
 
 ### Validation Status
 
