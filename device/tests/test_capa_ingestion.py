@@ -114,10 +114,11 @@ class TestCAPAIngestion:
 
     def test_update_capa_status(self):
         """
-        TC-8.5.2-005: Verify CAPA status updates
+        TC-8.5.2-005: Verify CAPA status updates with parameterized query
 
-        Expected: Status updated in BigQuery
+        Expected: Status updated in BigQuery using secure parameterized query
         Risk Control: risk-CRM-005
+        Security: Verifies VULN-001 fix (parameterized queries)
         """
         # Arrange
         mock_query_job = Mock()
@@ -133,10 +134,22 @@ class TestCAPAIngestion:
         # Assert
         assert result is True
         self.mock_bq_client.client.query.assert_called_once()
+
+        # Verify SQL uses parameterized queries (not f-strings)
         sql_call = self.mock_bq_client.client.query.call_args[0][0]
         assert "UPDATE" in sql_call
-        assert "status = 'Closed'" in sql_call
-        assert "CAPA-20251209-TEST" in sql_call
+        assert "status = @new_status" in sql_call  # Parameterized!
+        assert "capa_id = @capa_id" in sql_call  # Parameterized!
+
+        # Verify parameterized query config was passed
+        job_config = self.mock_bq_client.client.query.call_args[1].get("job_config")
+        assert job_config is not None
+        assert len(job_config.query_parameters) == 2  # new_status and capa_id
+
+        # Verify parameter values
+        param_names = [p.name for p in job_config.query_parameters]
+        assert "new_status" in param_names
+        assert "capa_id" in param_names
 
     def test_add_capa_action(self):
         """

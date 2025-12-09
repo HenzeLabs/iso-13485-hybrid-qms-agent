@@ -5,8 +5,8 @@ Handles connections and base operations for DCR/CAPA ingestion.
 
 from google.cloud import bigquery
 import os
-from datetime import datetime
-from typing import List, Dict, Any
+from datetime import datetime, UTC
+from typing import List, Dict, Any, Optional
 
 PROJECT_ID = os.environ.get("PROJECT_ID", "lw-qms-rag")
 DATASET_ID = "qms_workflows"
@@ -42,7 +42,7 @@ class QMSBigQueryClient:
         # Add timestamp if not present
         for row in rows:
             if 'created_at' not in row:
-                row['created_at'] = datetime.utcnow().isoformat()
+                row['created_at'] = datetime.now(UTC).isoformat()
         try:
             errors = self.client.insert_rows_json(table_ref, rows)
             if errors:
@@ -54,17 +54,18 @@ class QMSBigQueryClient:
             raise
         return True
     
-    def query(self, sql: str) -> List[Dict[str, Any]]:
+    def query(self, sql: str, job_config: Optional[bigquery.QueryJobConfig] = None) -> List[Dict[str, Any]]:
         """
         Execute a SQL query and return results as list of dicts.
-        
+
         Args:
             sql: SQL query string
-            
+            job_config: Optional QueryJobConfig for parameterized queries
+
         Returns:
             List of row dictionaries
         """
-        query_job = self.client.query(sql)
+        query_job = self.client.query(sql, job_config=job_config)
         results = query_job.result()
-        
+
         return [dict(row) for row in results]
