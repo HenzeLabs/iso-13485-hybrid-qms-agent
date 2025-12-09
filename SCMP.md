@@ -51,6 +51,30 @@ Protection rules:
 - Require two reviewers per PR: one engineering owner, one QA/quality representative.
 - All merges reference associated requirement IDs and validation evidence in the PR description.
 
+## GitHub Branch Protection & Validation Gates
+
+Enforce ISO 13485 traceability by protecting the key branches and requiring validation evidence before merges. Run these commands with GitHub CLI as an administrator for the repository (`HenzeLabs/iso-13485-hybrid-qms-agent`):
+
+```bash
+gh api repos/HenzeLabs/iso-13485-hybrid-qms-agent/branches/main/protection -X PUT \
+  -f required_status_checks.contexts='["validate-scm","unit-tests","doc-link-check"]' \
+  -f required_status_checks.strict=true \
+  -f enforce_admins=true \
+  -f required_pull_request_reviews.dismiss_stale_reviews=true \
+  -f required_pull_request_reviews.required_approving_review_count=2
+
+gh api repos/HenzeLabs/iso-13485-hybrid-qms-agent/branches/dev/protection -X PUT \
+  -f required_status_checks.contexts='["validate-scm","unit-tests","doc-link-check"]' \
+  -f required_status_checks.strict=true \
+  -f enforce_admins=true \
+  -f required_pull_request_reviews.dismiss_stale_reviews=true \
+  -f required_pull_request_reviews.required_approving_review_count=2
+```
+
+Repeat for `release/*` branches when they are created and ensure PR status checks report validation evidence (e.g., `validate-scm`, QA review, and update to DHF artifacts) before merging into `main`.
+
+Use GitHub Actions to publish validation results to those status checks so auditors can easily review them before approving a PR.
+
 ## Pull Request Policy
 
 All PRs target `dev` (or `release/*` for stabilization). The mandatory template is:
@@ -183,6 +207,7 @@ git push -u origin dev
 - **QA sign-off:** Store signed review minutes under `/documentation/DHF/reviews/` (e.g., `2025-12-09-review.md`) and reference them in PR validation evidence.
 - **Traceability:** Each release also updates `/documentation/traceability/Req-*.xlsx`, ensuring every requirement maps to code, tests, and validation deliverables.
 - **Merge criteria:** Releases merge into `main` only after validation automation runs, two approvals, and DMR artifact finalization.
+- **Release candidates:** Before cutting `release/v1.0-phase2-dec9-2025-rc1`, update `documentation/DMR/release-v1.0-phase2-dec9-2025.md` (RC section) and log QA validation minutes (e.g., `documentation/DHF/reviews/2025-12-12-qa-rc1.md`) so that reviewers can confirm the validated test suites (`device/tests/`) are tied to DHF/traceability artifacts prior to tagging.
 
 ## Phase 4: Deployment Automation Preview
 
