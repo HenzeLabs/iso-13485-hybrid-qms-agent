@@ -4,6 +4,9 @@ __pycache__/
 *.egg-info/
 *.pyo
 *.pyd
+.pytest_cache/
+venv/
+*.egg
 
 # Environment files
 .env
