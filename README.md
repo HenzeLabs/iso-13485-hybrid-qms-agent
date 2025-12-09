@@ -190,6 +190,34 @@ git push -u origin feature/Req-7.3.5-citation-enforcement
 }
 ```
 
+### POST /workflow
+```json
+{
+  "query": "Create a new CAPA for sterilization indicator inconsistency",
+  "user_email": "jane.smith@lwscientific.com"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "action": "create_capa",
+  "result": {
+    "capa_id": "CAPA-20251209-ABC12345"
+  },
+  "message": "Created CAPA: CAPA-20251209-ABC12345"
+}
+```
+
+**Supported Operations:**
+- Create/update CAPAs (Corrective and Preventive Actions)
+- Create/update DCRs (Design Change Requests)
+- Query CAPA/DCR status
+- Link CAPAs to DCRs
+
+**Documentation:** [device/docs/WORKFLOW_API.md](device/docs/WORKFLOW_API.md)
+
 ### GET /health
 ```json
 {
