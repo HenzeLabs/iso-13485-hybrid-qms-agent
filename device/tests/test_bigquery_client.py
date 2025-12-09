@@ -55,14 +55,18 @@ class TestBigQueryClient:
         table_name = "qms_capas"
         rows = [{"capa_id": "CAPA-002"}]
 
-        with patch('bigquery_client.logging') as mock_logging:
-            with patch.object(self.client, 'insert_rows', return_value=True):
+        with patch('logging.getLogger') as mock_get_logger:
+            mock_logger = Mock()
+            mock_get_logger.return_value = mock_logger
+
+            with patch.object(self.client.client, 'insert_rows_json', return_value=[]):
                 # Act
                 self.client.insert_rows(table_name, rows)
 
                 # Assert - verify logging was called
-                # This validates the debug logging added per requirement
-                pass  # Actual implementation will verify log calls
+                mock_get_logger.assert_called_with("QMSBigQueryClient")
+                # Verify debug and info logging occurred
+                assert mock_logger.debug.called or mock_logger.info.called
 
     def test_insert_rows_handles_errors(self):
         """
