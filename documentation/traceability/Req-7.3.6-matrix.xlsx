@@ -1,2 +1,3 @@
 Requirement ID,Module,Test Case,Validation Reference
-Req-7.3.6,agent,TC-7.3.6-01,documentation/DHF/Req-7.3.6.md
+Req-7.3.6,agent,TC-7.3.6-01 (app endpoint health + query stub),documentation/DHF/Req-7.3.6.md
+Req-7.3.6,agent,TC-7.3.6-02 (agent logic + GPT-4 stub),documentation/DHF/Req-7.3.6.md
