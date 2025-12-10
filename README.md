@@ -3,11 +3,14 @@
 **Regulated Medical Device Software - ISO 13485:2016 Compliant**
 
 ![Status](https://img.shields.io/badge/status-production-green)
-![Compliance](https://img.shields.io/badge/ISO_13485-compliant-blue)
+![Compliance](https://img.shields.io/badge/ISO_13485-fully_compliant-blue)
+![Release](https://img.shields.io/badge/release-v1.0--phase2--release-success)
 ![Architecture](https://img.shields.io/badge/architecture-hybrid-purple)
+![Tests](https://img.shields.io/badge/tests-31%2F31_passing-brightgreen)
 
 A production-ready Quality Management System compliance assistant for medical device companies operating under ISO 13485:2016 standards.
 
+**Current Release:** `v1.0-phase2-release` (2025-12-09) - PRODUCTION DEPLOYMENT AUTHORIZED  
 **Service URL:** https://qms-agent-728802725258.us-central1.run.app
 
 ---
@@ -17,8 +20,29 @@ A production-ready Quality Management System compliance assistant for medical de
 - **Developer Documentation:** [device/docs/README.md](device/docs/README.md)
 - **Quick Start Guide:** [device/docs/QUICKSTART.md](device/docs/QUICKSTART.md)
 - **Deployment Checklist:** [device/docs/DEPLOYMENT_CHECKLIST.md](device/docs/DEPLOYMENT_CHECKLIST.md)
+- **Release Information:** [PHASE2-RELEASE-CLOSURE.md](PHASE2-RELEASE-CLOSURE.md)
+- **Release Notes:** [RELEASE-NOTES-v1.0-phase2.md](RELEASE-NOTES-v1.0-phase2.md)
 - **SCM Plan:** [SCMP.md](SCMP.md)
 - **Design History File:** [documentation/DHF/](documentation/DHF/)
+
+---
+
+## Release Status
+
+### Phase 2 Production Release ✅
+
+| Aspect | Status | Details |
+|--------|--------|---------|
+| **Version** | ✅ v1.0-phase2-release | Git tag: `v1.0-phase2-release` at commit dd33ed2 |
+| **Release Date** | ✅ 2025-12-09 | Formally released to production |
+| **Validation Tests** | ✅ 31/31 Passing (100%) | IQ: 11/11, OQ: 20/20 |
+| **Security Status** | ✅ VULN-001 Resolved | Parameterized queries, 6 security tests passing |
+| **QA Approval** | ✅ Approved | Formal approval by QA Validation Lead |
+| **ISO 13485 Compliance** | ✅ Fully Compliant | All 10 design control clauses satisfied |
+| **Evidence Archived** | ✅ Immutable Record | 78 KB of validation evidence in git |
+| **Production Ready** | ✅ Yes | Authorized for deployment |
+
+**See:** [PHASE2-RELEASE-CLOSURE.md](PHASE2-RELEASE-CLOSURE.md) for complete release documentation
 
 ---
 
