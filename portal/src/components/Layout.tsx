@@ -3,17 +3,19 @@
 import { ReactNode, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  LayoutDashboard, 
-  AlertTriangle, 
-  FileText, 
-  Menu, 
-  X, 
+import { signOut, useSession } from 'next-auth/react';
+import {
+  LayoutDashboard,
+  AlertTriangle,
+  FileText,
+  Menu,
+  X,
   User,
   LogOut,
   MessageSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import AIAssistant from './AIAssistant';
 
 interface LayoutProps {
   children: ReactNode;
@@ -29,6 +31,11 @@ export default function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [assistantOpen, setAssistantOpen] = useState(false);
   const pathname = usePathname();
+  const { data: session } = useSession();
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/auth/signin' });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -99,11 +106,18 @@ export default function Layout({ children }: LayoutProps) {
             <div className="flex items-center">
               <User className="h-8 w-8 text-gray-400" />
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-700">Demo User</p>
-                <p className="text-xs text-gray-500">QA Manager</p>
+                <p className="text-sm font-medium text-gray-700">
+                  {session?.user?.name || 'Demo User'}
+                </p>
+                <p className="text-xs text-gray-500">
+                  QA Manager
+                </p>
               </div>
             </div>
-            <button className="mt-3 flex items-center text-sm text-gray-500 hover:text-gray-700">
+            <button
+              onClick={handleSignOut}
+              className="mt-3 flex items-center text-sm text-gray-500 hover:text-gray-700"
+            >
               <LogOut className="mr-2 h-4 w-4" />
               Sign out
             </button>
@@ -158,12 +172,8 @@ export default function Layout({ children }: LayoutProps) {
               <X className="h-6 w-6" />
             </button>
           </div>
-          <div className="flex-1 p-4">
-            <div className="rounded-lg bg-gray-50 p-4 text-center text-gray-500">
-              AI Assistant integration coming soon...
-              <br />
-              <small className="text-xs">Phase 4C: LLM Assistant</small>
-            </div>
+          <div className="flex-1">
+            <AIAssistant userId="demo.user@company.com" />
           </div>
         </div>
       </div>

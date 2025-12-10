@@ -7,12 +7,12 @@ export interface User {
   permissions: Permission[];
 }
 
-export type UserRole = 'Engineer' | 'QA' | 'Production' | 'Manager';
+export type UserRole = 'Engineer' | 'QA' | 'Production' | 'Manager' | 'Admin';
 
 export type Permission = 
   | 'capa:create' | 'capa:update' | 'capa:approve' | 'capa:view'
   | 'dcr:create' | 'dcr:update' | 'dcr:approve' | 'dcr:view'
-  | 'dashboard:view' | 'reports:view';
+  | 'dashboard:view' | 'reports:view' | '*';
 
 // CAPA Types
 export interface CAPA {

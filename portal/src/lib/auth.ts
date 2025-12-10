@@ -1,25 +1,6 @@
 import { User, UserRole, Permission } from '@/types';
-
-// Role-based permissions mapping
-const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
-  Engineer: [
-    'dcr:create', 'dcr:update', 'dcr:view',
-    'capa:view', 'dashboard:view'
-  ],
-  QA: [
-    'capa:create', 'capa:update', 'capa:approve', 'capa:view',
-    'dcr:approve', 'dcr:view',
-    'dashboard:view', 'reports:view'
-  ],
-  Production: [
-    'capa:view', 'dcr:view', 'dashboard:view'
-  ],
-  Manager: [
-    'capa:create', 'capa:update', 'capa:approve', 'capa:view',
-    'dcr:create', 'dcr:update', 'dcr:approve', 'dcr:view',
-    'dashboard:view', 'reports:view'
-  ],
-};
+import { AuditLogger } from './auth/audit';
+import { buildUser, getPermissionsForRole, hasPermission as roleHasPermission, mapEmailToRole } from './auth/rbac';
 
 // Mock user database - in production, this would be from a real database
 const MOCK_USERS: Record<string, { role: UserRole; name: string }> = {
@@ -27,18 +8,21 @@ const MOCK_USERS: Record<string, { role: UserRole; name: string }> = {
   'engineer@lwscientific.com': { role: 'Engineer', name: 'Engineering Lead' },
   'production@lwscientific.com': { role: 'Production', name: 'Production Manager' },
   'manager@lwscientific.com': { role: 'Manager', name: 'General Manager' },
+  'admin@lwscientific.com': { role: 'Admin', name: 'Administrator' },
 };
 
+const auditLogger = new AuditLogger();
+
 export function getUserRole(email: string): UserRole {
-  return MOCK_USERS[email]?.role || 'Production'; // Default to most restrictive role
+  return MOCK_USERS[email]?.role || mapEmailToRole(email);
 }
 
 export function getUserPermissions(role: UserRole): Permission[] {
-  return ROLE_PERMISSIONS[role] || [];
+  return getPermissionsForRole(role);
 }
 
 export function hasPermission(user: User, permission: Permission): boolean {
-  return user.permissions.includes(permission);
+  return roleHasPermission(user.role, permission);
 }
 
 export function createUser(email: string, name?: string): User {
@@ -55,14 +39,16 @@ export function createUser(email: string, name?: string): User {
 }
 
 // Audit logging for authentication events
-export function logAuthEvent(event: string, user: User, details?: any) {
-  console.log(`[AUTH] ${event}`, {
+export async function logAuthEvent(event: string, user: User, details?: any) {
+  const payload = {
     timestamp: new Date().toISOString(),
-    user_id: user.email,
-    user_role: user.role,
-    event,
-    details,
-  });
-  
-  // In production, this would send to audit logging system
+    userId: user.email,
+    userEmail: user.email,
+    userRole: user.role,
+    action: event,
+    resource: 'auth',
+    metadata: details,
+  };
+
+  await auditLogger.log(payload);
 }

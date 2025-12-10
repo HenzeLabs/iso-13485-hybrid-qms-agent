@@ -13,8 +13,10 @@ const api = axios.create({
 });
 
 // Add auth token to requests
+// Note: NextAuth JWT session is handled via NextAuth middleware.
+// Individual API requests include user context via function parameters.
+// Token injection can be added here if API-level auth is needed in Phase 5.
 api.interceptors.request.use((config) => {
-  // TODO: Add auth token from session
   return config;
 });
 
