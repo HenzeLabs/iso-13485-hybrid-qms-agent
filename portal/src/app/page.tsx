@@ -1,18 +1,21 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Layout from '@/components/Layout';
-import { DashboardAPI } from '@/lib/api';
-import { DashboardStats } from '@/types';
-import { 
-  AlertTriangle, 
-  FileText, 
-  Clock, 
+// Disable static generation for pages with session-dependent components
+export const dynamic = "force-dynamic";
+
+import { useEffect, useState } from "react";
+import Layout from "@/components/Layout";
+import { DashboardAPI } from "@/lib/api";
+import { DashboardStats } from "@/types";
+import {
+  AlertTriangle,
+  FileText,
+  Clock,
   CheckCircle,
   TrendingUp,
-  Users
-} from 'lucide-react';
-import { formatDateTime, getStatusColor, getSeverityColor } from '@/lib/utils';
+  Users,
+} from "lucide-react";
+import { formatDateTime, getStatusColor, getSeverityColor } from "@/lib/utils";
 
 export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -24,7 +27,7 @@ export default function Dashboard() {
         const data = await DashboardAPI.getStats();
         setStats(data);
       } catch (error) {
-        console.error('Failed to load dashboard stats:', error);
+        console.error("Failed to load dashboard stats:", error);
       } finally {
         setLoading(false);
       }
@@ -77,14 +80,20 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Total CAPAs</p>
-                <p className="text-2xl font-semibold text-gray-900">{stats.capas.total}</p>
+                <p className="text-2xl font-semibold text-gray-900">
+                  {stats.capas.total}
+                </p>
               </div>
             </div>
             <div className="mt-4">
               <div className="flex items-center text-sm">
-                <span className="text-warning-600 font-medium">{stats.capas.open} Open</span>
+                <span className="text-warning-600 font-medium">
+                  {stats.capas.open} Open
+                </span>
                 <span className="mx-2 text-gray-300">•</span>
-                <span className="text-danger-600 font-medium">{stats.capas.overdue} Overdue</span>
+                <span className="text-danger-600 font-medium">
+                  {stats.capas.overdue} Overdue
+                </span>
               </div>
             </div>
           </div>
@@ -97,14 +106,20 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Total DCRs</p>
-                <p className="text-2xl font-semibold text-gray-900">{stats.dcrs.total}</p>
+                <p className="text-2xl font-semibold text-gray-900">
+                  {stats.dcrs.total}
+                </p>
               </div>
             </div>
             <div className="mt-4">
               <div className="flex items-center text-sm">
-                <span className="text-warning-600 font-medium">{stats.dcrs.pending_approval} Pending</span>
+                <span className="text-warning-600 font-medium">
+                  {stats.dcrs.pending_approval} Pending
+                </span>
                 <span className="mx-2 text-gray-300">•</span>
-                <span className="text-primary-600 font-medium">{stats.dcrs.in_review} In Review</span>
+                <span className="text-primary-600 font-medium">
+                  {stats.dcrs.in_review} In Review
+                </span>
               </div>
             </div>
           </div>
@@ -116,7 +131,9 @@ export default function Dashboard() {
                 <Clock className="h-8 w-8 text-warning-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Pending Approvals</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Pending Approvals
+                </p>
                 <p className="text-2xl font-semibold text-gray-900">
                   {stats.dcrs.pending_approval + (stats.capas.open > 5 ? 3 : 1)}
                 </p>
@@ -137,7 +154,9 @@ export default function Dashboard() {
                 <TrendingUp className="h-8 w-8 text-success-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Quality Score</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Quality Score
+                </p>
                 <p className="text-2xl font-semibold text-gray-900">94%</p>
               </div>
             </div>
@@ -154,47 +173,71 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* CAPA by Severity */}
           <div className="card">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">CAPAs by Severity</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              CAPAs by Severity
+            </h3>
             <div className="space-y-3">
-              {Object.entries(stats.capas.by_severity).map(([severity, count]) => (
-                <div key={severity} className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <span className={`status-badge ${getSeverityColor(severity)}`}>
-                      {severity}
+              {Object.entries(stats.capas.by_severity).map(
+                ([severity, count]) => (
+                  <div
+                    key={severity}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="flex items-center">
+                      <span
+                        className={`status-badge ${getSeverityColor(severity)}`}
+                      >
+                        {severity}
+                      </span>
+                    </div>
+                    <span className="text-sm font-medium text-gray-900">
+                      {count}
                     </span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900">{count}</span>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
 
           {/* DCR by Priority */}
           <div className="card">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">DCRs by Priority</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              DCRs by Priority
+            </h3>
             <div className="space-y-3">
-              {Object.entries(stats.dcrs.by_priority).map(([priority, count]) => (
-                <div key={priority} className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <span className={`status-badge ${getSeverityColor(priority)}`}>
-                      {priority}
+              {Object.entries(stats.dcrs.by_priority).map(
+                ([priority, count]) => (
+                  <div
+                    key={priority}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="flex items-center">
+                      <span
+                        className={`status-badge ${getSeverityColor(priority)}`}
+                      >
+                        {priority}
+                      </span>
+                    </div>
+                    <span className="text-sm font-medium text-gray-900">
+                      {count}
                     </span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900">{count}</span>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
         </div>
 
         {/* Recent Activity */}
         <div className="card">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Activity</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">
+            Recent Activity
+          </h3>
           <div className="space-y-4">
             {stats.recent_activity.map((activity) => (
               <div key={activity.id} className="flex items-start space-x-3">
                 <div className="flex-shrink-0">
-                  {activity.type === 'capa' ? (
+                  {activity.type === "capa" ? (
                     <AlertTriangle className="h-5 w-5 text-warning-600" />
                   ) : (
                     <FileText className="h-5 w-5 text-primary-600" />

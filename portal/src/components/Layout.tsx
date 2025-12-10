@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { ReactNode, useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { signOut, useSession } from 'next-auth/react';
+import { ReactNode, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 import {
   LayoutDashboard,
   AlertTriangle,
@@ -12,39 +12,45 @@ import {
   X,
   User,
   LogOut,
-  MessageSquare
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import AIAssistant from './AIAssistant';
+  MessageSquare,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import AIAssistant from "./AIAssistant";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'CAPA Manager', href: '/capa', icon: AlertTriangle },
-  { name: 'DCR Manager', href: '/dcr', icon: FileText },
+  { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "CAPA Manager", href: "/capa", icon: AlertTriangle },
+  { name: "DCR Manager", href: "/dcr", icon: FileText },
 ];
 
 export default function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [assistantOpen, setAssistantOpen] = useState(false);
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const sessionData = useSession();
+  const session = sessionData?.data;
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/auth/signin' });
+    await signOut({ callbackUrl: "/auth/signin" });
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile sidebar */}
-      <div className={cn(
-        'fixed inset-0 z-50 lg:hidden',
-        sidebarOpen ? 'block' : 'hidden'
-      )}>
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
+      <div
+        className={cn(
+          "fixed inset-0 z-50 lg:hidden",
+          sidebarOpen ? "block" : "hidden"
+        )}
+      >
+        <div
+          className="fixed inset-0 bg-gray-600 bg-opacity-75"
+          onClick={() => setSidebarOpen(false)}
+        />
         <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
           <div className="flex h-16 items-center justify-between px-4">
             <h1 className="text-xl font-semibold text-gray-900">QMS Portal</h1>
@@ -60,10 +66,10 @@ export default function Layout({ children }: LayoutProps) {
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    'group flex items-center px-2 py-2 text-sm font-medium rounded-md',
+                    "group flex items-center px-2 py-2 text-sm font-medium rounded-md",
                     isActive
-                      ? 'bg-primary-100 text-primary-900'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      ? "bg-primary-100 text-primary-900"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   )}
                   onClick={() => setSidebarOpen(false)}
                 >
@@ -90,10 +96,10 @@ export default function Layout({ children }: LayoutProps) {
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    'group flex items-center px-2 py-2 text-sm font-medium rounded-md',
+                    "group flex items-center px-2 py-2 text-sm font-medium rounded-md",
                     isActive
-                      ? 'bg-primary-100 text-primary-900'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      ? "bg-primary-100 text-primary-900"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   )}
                 >
                   <item.icon className="mr-3 h-5 w-5" />
@@ -107,11 +113,9 @@ export default function Layout({ children }: LayoutProps) {
               <User className="h-8 w-8 text-gray-400" />
               <div className="ml-3">
                 <p className="text-sm font-medium text-gray-700">
-                  {session?.user?.name || 'Demo User'}
+                  {session?.user?.name || "Demo User"}
                 </p>
-                <p className="text-xs text-gray-500">
-                  QA Manager
-                </p>
+                <p className="text-xs text-gray-500">QA Manager</p>
               </div>
             </div>
             <button
@@ -154,20 +158,22 @@ export default function Layout({ children }: LayoutProps) {
 
         {/* Page content */}
         <main className="py-10">
-          <div className="px-4 sm:px-6 lg:px-8">
-            {children}
-          </div>
+          <div className="px-4 sm:px-6 lg:px-8">{children}</div>
         </main>
       </div>
 
       {/* AI Assistant Panel */}
-      <div className={cn(
-        'fixed inset-y-0 right-0 z-50 w-96 bg-white shadow-xl transform transition-transform duration-300 ease-in-out',
-        assistantOpen ? 'translate-x-0' : 'translate-x-full'
-      )}>
+      <div
+        className={cn(
+          "fixed inset-y-0 right-0 z-50 w-96 bg-white shadow-xl transform transition-transform duration-300 ease-in-out",
+          assistantOpen ? "translate-x-0" : "translate-x-full"
+        )}
+      >
         <div className="flex h-full flex-col">
           <div className="flex h-16 items-center justify-between border-b border-gray-200 px-4">
-            <h2 className="text-lg font-semibold text-gray-900">AI Assistant</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              AI Assistant
+            </h2>
             <button onClick={() => setAssistantOpen(false)}>
               <X className="h-6 w-6" />
             </button>
