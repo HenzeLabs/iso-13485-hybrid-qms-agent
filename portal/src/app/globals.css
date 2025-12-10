@@ -2,54 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html {
-    font-family: system-ui, sans-serif;
-  }
-}
-
 @layer components {
   .btn {
-    @apply px-4 py-2 rounded-md font-medium transition-colors;
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background;
   }
   
   .btn-primary {
-    @apply bg-primary-600 text-white hover:bg-primary-700;
+    @apply bg-primary-600 text-white hover:bg-primary-700 px-4 py-2;
   }
   
   .btn-secondary {
-    @apply bg-gray-200 text-gray-900 hover:bg-gray-300;
+    @apply bg-gray-100 text-gray-900 hover:bg-gray-200 px-4 py-2;
   }
   
   .btn-success {
-    @apply bg-success-600 text-white hover:bg-success-700;
+    @apply bg-success-600 text-white hover:bg-success-700 px-4 py-2;
   }
   
-  .btn-danger {
-    @apply bg-danger-600 text-white hover:bg-danger-700;
-  }
-  
-  .card {
-    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
-  }
-  
-  .status-badge {
-    @apply px-2 py-1 rounded-full text-xs font-medium;
-  }
-  
-  .status-open {
-    @apply bg-warning-50 text-warning-600;
-  }
-  
-  .status-in-progress {
-    @apply bg-primary-50 text-primary-600;
-  }
-  
-  .status-completed {
-    @apply bg-success-50 text-success-600;
-  }
-  
-  .status-closed {
-    @apply bg-gray-50 text-gray-600;
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs;
   }
 }

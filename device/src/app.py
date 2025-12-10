@@ -4,10 +4,11 @@ Exposes REST endpoints for compliance queries with Gemini + Vertex AI Search,
 plus workflow operations (DCR/CAPA) via BigQuery.
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
 from agent_logic import run_agent_query
 from workflow_handler import WorkflowQueryHandler
+from auth_middleware import enforce_role
 import logging
 
 # Configure logging for audit trail
@@ -39,7 +40,10 @@ class WorkflowQueryRequest(BaseModel):
 
 
 @app.post("/query", response_description="Compliance response with citations")
-async def query_qms(request: QueryRequest):
+async def query_qms(
+    request: QueryRequest,
+    auth: dict = Depends(enforce_role(["Engineer", "QA", "Manager", "Admin"]))
+):
     """
     POST /query
     Execute a QMS compliance query against the knowledge base.
@@ -68,7 +72,10 @@ async def query_qms(request: QueryRequest):
 
 
 @app.post("/workflow", response_description="Workflow operation result")
-async def handle_workflow(request: WorkflowQueryRequest):
+async def handle_workflow(
+    request: WorkflowQueryRequest,
+    auth: dict = Depends(enforce_role(["QA", "Manager", "Admin"]))
+):
     """
     POST /workflow
     Handle workflow operations (DCR/CAPA creation, status queries, etc.).
@@ -107,7 +114,10 @@ async def handle_workflow(request: WorkflowQueryRequest):
 
 
 @app.get("/dcr/{dcr_id}", response_description="DCR details with approvals")
-async def get_dcr(dcr_id: str):
+async def get_dcr(
+    dcr_id: str,
+    auth: dict = Depends(enforce_role(["Engineer", "Manager", "Admin"]))
+):
     """
     GET /dcr/{dcr_id}
     Retrieve DCR status and approval routing.
@@ -128,7 +138,10 @@ async def get_dcr(dcr_id: str):
 
 
 @app.get("/capa/{capa_id}", response_description="CAPA details with actions and approvals")
-async def get_capa(capa_id: str):
+async def get_capa(
+    capa_id: str,
+    auth: dict = Depends(enforce_role(["QA", "Manager", "Admin"]))
+):
     """
     GET /capa/{capa_id}
     Retrieve CAPA case details, actions, and approvals.

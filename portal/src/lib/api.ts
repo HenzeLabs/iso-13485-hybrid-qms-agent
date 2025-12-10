@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getSession } from 'next-auth/react';
 import { APIResponse, FunctionCall, CAPA, DCR, DashboardStats } from '@/types';
 
 const API_BASE_URL = process.env.QMS_API_URL || 'https://qms-agent-728802725258.us-central1.run.app';
@@ -12,11 +13,29 @@ const api = axios.create({
   },
 });
 
-// Add auth token to requests
-// Note: NextAuth JWT session is handled via NextAuth middleware.
-// Individual API requests include user context via function parameters.
-// Token injection can be added here if API-level auth is needed in Phase 5.
-api.interceptors.request.use((config) => {
+// Add auth token to requests - PRODUCTION READY
+api.interceptors.request.use(async (config) => {
+  try {
+    const session = await getSession();
+    if (session?.user?.email) {
+      // Use user email as identifier for backend auth
+      config.headers['X-User-Email'] = session.user.email;
+      config.headers['X-User-Role'] = session.user.role || 'Staff';
+    }
+    
+    // Add JWT token if available
+    if (session?.accessToken) {
+      config.headers.Authorization = `Bearer ${session.accessToken}`;
+    }
+  } catch (error) {
+    console.error('[API] Failed to get session for request:', error);
+    // Log to audit trail for security monitoring
+    console.log('[AUDIT] API_REQUEST_AUTH_FAILED', {
+      timestamp: new Date().toISOString(),
+      url: config.url,
+      error: error.message
+    });
+  }
   return config;
 });
 

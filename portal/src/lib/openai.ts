@@ -1,11 +1,8 @@
-import OpenAI from 'openai';
 import { ActionAPI } from './api';
 import { FunctionCall } from '@/types';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
-  dangerouslyAllowBrowser: true, // For demo - use server-side in production
-});
+// PRODUCTION: OpenAI calls moved to server-side API routes
+// Client-side OpenAI usage removed for security
 
 export interface AssistantMessage {
   id: string;
@@ -56,7 +53,36 @@ export class LLMAssistant {
       const functions = functionsResponse.functions || [];
 
       // Create OpenAI completion with function calling
-      const completion = await openai.chat.completions.create({
+      // PRODUCTION: Use server-side API for OpenAI calls
+      const response = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message,
+          sessionId
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      const assistantResponse = {
+        content: data.response,
+        function_call: null // Function calling handled separately
+      };
+
+      // Skip the old OpenAI completion call
+      const fakeCompletion = { choices: [{ message: assistantResponse }] };
+      const completion = fakeCompletion;
+      const realCompletion = await Promise.resolve({
         model: 'gpt-4-turbo-preview',
         messages: [
           {

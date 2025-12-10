@@ -41,11 +41,26 @@ export default function AIAssistant({ userId }: AIAssistantProps) {
   useEffect(() => {
     const hydrate = async () => {
       if (!sessionId) return;
-      const saved = await conversationManager.loadState(sessionId);
-      if (saved) {
-        assistant.setConversation({
-          messages: saved.messages,
-          pending_confirmations: saved.pendingActions.map((p) => ({
+      try {
+        const saved = await conversationManager.loadState(sessionId);
+        if (saved) {
+          assistant.setConversation({
+            messages: saved.messages,
+            pending_confirmations: saved.pendingActions.map((p) => ({
+              id: p.id,
+              function_call: {
+                function_name: p.functionCall.name,
+                arguments: p.functionCall.arguments,
+                user_id: saved.userId,
+                confirmed: false,
+                session_id: saved.sessionId,
+              },
+              message: p.message,
+              timestamp: p.createdAt,
+            })),
+          });
+          setMessages(saved.messages);
+          setPendingConfirmations(saved.pendingActions.map((p) => ({
             id: p.id,
             function_call: {
               function_name: p.functionCall.name,
@@ -56,22 +71,15 @@ export default function AIAssistant({ userId }: AIAssistantProps) {
             },
             message: p.message,
             timestamp: p.createdAt,
-          })),
-        });
-        setMessages(saved.messages);
-        setPendingConfirmations(saved.pendingActions.map((p) => ({
-          id: p.id,
-          function_call: {
-            function_name: p.functionCall.name,
-            arguments: p.functionCall.arguments,
-            user_id: saved.userId,
-            confirmed: false,
-            session_id: saved.sessionId,
-          },
-          message: p.message,
-          timestamp: p.createdAt,
-        })));
-        setCitations(saved.citations || []);
+          })));
+          setCitations(saved.citations || []);
+        }
+      } catch (error) {
+        console.error('Failed to load conversation state:', error);
+        // Fallback to default state
+        setMessages([]);
+        setPendingConfirmations([]);
+        setCitations([]);
       }
     };
     void hydrate();
