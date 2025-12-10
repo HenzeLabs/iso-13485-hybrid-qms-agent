@@ -28,5 +28,13 @@ device/build/
 # Docker
 docker-compose.override.yml
 
-# Node modules (if added later)
+# Node modules
 node_modules/
+
+# Next.js build artifacts
+.next/
+out/
+
+# Production environment files
+.env.production
+.env.local
