@@ -61,4 +61,17 @@ export class ConversationManager {
     existing.pendingActions.push(action);
     await this.saveState(existing);
   }
+
+  async clearState(sessionId: string): Promise<void> {
+    try {
+      if (typeof window !== 'undefined') {
+        const key = `qms-conversation-${sessionId}`;
+        window.localStorage.removeItem(key);
+        console.log(`[ConversationManager] Cleared state for session: ${sessionId}`);
+      }
+    } catch (error) {
+      console.error('[ConversationManager] Failed to clear state:', error);
+      throw error;
+    }
+  }
 }

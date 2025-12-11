@@ -39,18 +39,26 @@ export const authOptions: NextAuthOptions = {
         // Create user with role-based permissions
         const qmsUser = createUser(user.email || '', user.name || '');
         token.user = qmsUser;
-        
+
         // Log successful authentication
         logAuthEvent('JWT_CREATED', qmsUser, { provider: account?.provider });
+      }
+      // Preserve access token from OAuth provider
+      if (account?.access_token) {
+        token.accessToken = account.access_token;
       }
       return token;
     },
     async session({ session, token }) {
       if (token.user) {
         session.user = token.user as any;
-        
+
         // Log session creation
         logAuthEvent('SESSION_CREATED', token.user as any);
+      }
+      // Expose access token to client-side session
+      if (token.accessToken) {
+        session.accessToken = token.accessToken as string;
       }
       return session;
     },

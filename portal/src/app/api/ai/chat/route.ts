@@ -86,11 +86,12 @@ Always maintain a professional, helpful tone focused on quality and compliance.`
 
   } catch (error) {
     console.error('[API] OpenAI chat error:', error);
-    
+
     // Log error for audit trail
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.log('[AUDIT] AI_CHAT_ERROR', {
       timestamp: new Date().toISOString(),
-      error: error.message,
+      error: errorMessage,
       sessionId: request.headers.get('x-session-id')
     });
 

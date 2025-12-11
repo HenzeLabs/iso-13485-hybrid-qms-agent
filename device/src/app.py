@@ -4,11 +4,11 @@ Exposes REST endpoints for compliance queries with Gemini + Vertex AI Search,
 plus workflow operations (DCR/CAPA) via BigQuery.
 """
 
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, status
 from pydantic import BaseModel
 from agent_logic import run_agent_query
 from workflow_handler import WorkflowQueryHandler
-from auth_middleware import enforce_role
+from auth_middleware import enforce_role, verify_jwt_token, audit_request, is_auth_enforced
 import logging
 
 # Configure logging for audit trail
@@ -42,23 +42,40 @@ class WorkflowQueryRequest(BaseModel):
 @app.post("/query", response_description="Compliance response with citations")
 async def query_qms(
     request: QueryRequest,
-    auth: dict = Depends(enforce_role(["Engineer", "QA", "Manager", "Admin"]))
+    auth: dict = Depends(audit_request)
 ):
     """
     POST /query
     Execute a QMS compliance query against the knowledge base.
-    
+
+    REQUIRES AUTHENTICATION: Engineer, QA, Manager, or Admin role
+
     Args:
         request (QueryRequest): Query text and user role
-        
+        auth: JWT payload (validated by audit_request middleware)
+
     Returns:
         dict: answer (str) and citations (list of objects with title, url, page)
-        
+
     Raises:
-        HTTPException: 500 on agent execution failure
+        HTTPException: 401 if unauthenticated, 403 if unauthorized, 500 on error
     """
-    logger.info(f"Received query from {request.user_role}: {request.query[:100]}...")
-    
+    # Extract user from validated JWT
+    user_data = auth.get("user", {})
+    user_role = user_data.get("role", "unknown")
+    user_email = user_data.get("email", "unknown")
+
+    # Enforce role-based access
+    allowed_roles = ["Engineer", "QA", "Manager", "Admin"]
+    if user_role not in allowed_roles:
+        logger.warning(f"Query access denied for role: {user_role}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Access denied. Required roles: {allowed_roles}"
+        )
+
+    logger.info(f"Received query from {user_email} ({user_role}): {request.query[:100]}...")
+
     try:
         result = run_agent_query(request.query)
         logger.info(f"Query processed successfully. Citations: {len(result['citations'])}")
@@ -66,7 +83,7 @@ async def query_qms(
     except Exception as e:
         logger.error(f"Query execution failed: {str(e)}", exc_info=True)
         raise HTTPException(
-            status_code=500, 
+            status_code=500,
             detail=f"Agent query failed: {str(e)}"
         )
 
@@ -74,30 +91,50 @@ async def query_qms(
 @app.post("/workflow", response_description="Workflow operation result")
 async def handle_workflow(
     request: WorkflowQueryRequest,
-    auth: dict = Depends(enforce_role(["QA", "Manager", "Admin"]))
+    auth: dict = Depends(audit_request)
 ):
     """
     POST /workflow
     Handle workflow operations (DCR/CAPA creation, status queries, etc.).
-    
+
+    REQUIRES AUTHENTICATION: QA, Manager, or Admin role
+
     Automatically routes to:
     - BigQuery for workflow state (read/write)
     - Vertex AI Search for knowledge base context (if hybrid query)
-    
+
     Args:
         request (WorkflowQueryRequest): Query text and user email
-        
+        auth: JWT payload (validated by audit_request middleware)
+
     Returns:
         dict: action, result, and message describing what was done
-        
+
+    Raises:
+        HTTPException: 401 if unauthenticated, 403 if unauthorized, 500 on error
+
     Examples:
         - "Create a new DCR for ISO 7.3.5 design changes"
         - "Show me DCRs awaiting Quality approval"
         - "Update CAPA-001 root cause to calibration drift"
         - "List overdue CAPA actions"
     """
-    logger.info(f"Workflow query from {request.user_email}: {request.query[:100]}...")
-    
+    # Extract user from validated JWT
+    user_data = auth.get("user", {})
+    user_role = user_data.get("role", "unknown")
+    user_email = user_data.get("email", "unknown")
+
+    # Enforce role-based access
+    allowed_roles = ["QA", "Manager", "Admin"]
+    if user_role not in allowed_roles:
+        logger.warning(f"Workflow access denied for role: {user_role}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Access denied. Required roles: {allowed_roles}"
+        )
+
+    logger.info(f"Workflow query from {user_email} ({user_role}): {request.query[:100]}...")
+
     try:
         result = await workflow_handler.handle_workflow_query(
             query=request.query,
@@ -165,14 +202,14 @@ async def get_capa(
 def health_check():
     """
     GET /health
-    Health check endpoint for Cloud Run liveness probes.
-    
+    Public health check endpoint (no authentication required).
+
     Returns:
-        dict: Service status and compliance mode
+        dict: Service status and version
     """
     return {
-        "status": "operational",
-        "compliance_mode": "active",
-        "service": "ISO 13485 QMS Agent",
-        "features": ["knowledge_base", "workflow_management"]
+        "status": "healthy",
+        "service": "qms-agent-api",
+        "version": "1.0.0",
+        "auth_enforced": is_auth_enforced()
     }

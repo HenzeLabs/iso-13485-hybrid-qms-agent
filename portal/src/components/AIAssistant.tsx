@@ -40,48 +40,95 @@ export default function AIAssistant({ userId }: AIAssistantProps) {
 
   useEffect(() => {
     const hydrate = async () => {
-      if (!sessionId) return;
+      // Skip hydration if no sessionId (prevents hydration mismatch)
+      if (!sessionId) {
+        console.log('[AIAssistant] No sessionId - skipping hydration');
+        return;
+      }
+
       try {
+        console.log('[AIAssistant] Attempting to load conversation state:', sessionId);
+
         const saved = await conversationManager.loadState(sessionId);
-        if (saved) {
-          assistant.setConversation({
-            messages: saved.messages,
-            pending_confirmations: saved.pendingActions.map((p) => ({
-              id: p.id,
-              function_call: {
-                function_name: p.functionCall.name,
-                arguments: p.functionCall.arguments,
-                user_id: saved.userId,
-                confirmed: false,
-                session_id: saved.sessionId,
-              },
-              message: p.message,
-              timestamp: p.createdAt,
-            })),
-          });
-          setMessages(saved.messages);
-          setPendingConfirmations(saved.pendingActions.map((p) => ({
+
+        if (!saved) {
+          console.log('[AIAssistant] No saved state found - starting fresh conversation');
+          setMessages([]);
+          setPendingConfirmations([]);
+          setCitations([]);
+          return;
+        }
+
+        // Validate saved state structure
+        if (!Array.isArray(saved.messages)) {
+          console.error('[AIAssistant] Invalid saved state - messages not an array');
+          throw new Error('Corrupted conversation state');
+        }
+
+        console.log('[AIAssistant] Restoring conversation:', {
+          messageCount: saved.messages.length,
+          pendingActions: saved.pendingActions?.length || 0,
+          citations: saved.citations?.length || 0,
+        });
+
+        // Map pending actions with defensive checks
+        const mappedPendingActions = (saved.pendingActions || []).map((p) => {
+          if (!p.id || !p.functionCall || !p.message) {
+            console.warn('[AIAssistant] Skipping invalid pending action:', p);
+            return null;
+          }
+          return {
             id: p.id,
             function_call: {
               function_name: p.functionCall.name,
-              arguments: p.functionCall.arguments,
+              arguments: p.functionCall.arguments || {},
               user_id: saved.userId,
               confirmed: false,
               session_id: saved.sessionId,
             },
             message: p.message,
-            timestamp: p.createdAt,
-          })));
-          setCitations(saved.citations || []);
-        }
+            timestamp: p.createdAt || new Date().toISOString(),
+          };
+        }).filter(Boolean) as PendingConfirmation[];
+
+        // Update assistant conversation state
+        assistant.setConversation({
+          messages: saved.messages,
+          pending_confirmations: mappedPendingActions,
+        });
+
+        // Update React state (triggers re-render)
+        setMessages(saved.messages);
+        setPendingConfirmations(mappedPendingActions);
+        setCitations(saved.citations || []);
+
+        console.log('[AIAssistant] Conversation state restored successfully');
+
       } catch (error) {
-        console.error('Failed to load conversation state:', error);
-        // Fallback to default state
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error('[AIAssistant] Failed to load conversation state:', errorMessage);
+
+        // Critical: Reset to clean state to prevent UI corruption
         setMessages([]);
         setPendingConfirmations([]);
         setCitations([]);
+
+        // Optionally: Clear corrupted state from storage
+        try {
+          await conversationManager.clearState(sessionId);
+          console.log('[AIAssistant] Cleared corrupted conversation state');
+        } catch (clearError) {
+          console.error('[AIAssistant] Failed to clear corrupted state:', clearError);
+        }
+
+        // Show user-friendly error message
+        if (typeof window !== 'undefined') {
+          console.warn('[AIAssistant] Starting fresh conversation due to state corruption');
+        }
       }
     };
+
+    // Use void to explicitly ignore promise (Next.js best practice)
     void hydrate();
   }, [assistant, conversationManager, sessionId]);
 

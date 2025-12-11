@@ -45,7 +45,7 @@ export default function CAPAManager() {
         <div className="text-center">
           <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Access Denied</h2>
-          <p className="text-gray-600">You don't have permission to view CAPA records.</p>
+          <p className="text-gray-600">You don&apos;t have permission to view CAPA records.</p>
         </div>
       </div>
     );

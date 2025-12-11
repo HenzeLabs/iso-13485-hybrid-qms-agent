@@ -13,31 +13,71 @@ const api = axios.create({
   },
 });
 
-// Add auth token to requests - PRODUCTION READY
-api.interceptors.request.use(async (config) => {
-  try {
-    const session = await getSession();
-    if (session?.user?.email) {
-      // Use user email as identifier for backend auth
+// Add auth token to requests - PRODUCTION READY with enhanced error handling
+api.interceptors.request.use(
+  async (config) => {
+    try {
+      const session = await getSession();
+
+      if (!session?.user?.email) {
+        console.warn('[API] No active session - request may be rejected by backend');
+        throw new Error('Authentication required - no active session');
+      }
+
+      // Always include user context headers
       config.headers['X-User-Email'] = session.user.email;
       config.headers['X-User-Role'] = session.user.role || 'Staff';
+
+      // Add JWT token (OAuth access token from Google)
+      if (session.accessToken) {
+        config.headers.Authorization = `Bearer ${session.accessToken}`;
+      } else {
+        console.warn('[API] Session exists but no access token available');
+      }
+
+      return config;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+      console.error('[API] Failed to authenticate request:', errorMessage);
+
+      // Log to audit trail for security monitoring
+      console.log('[AUDIT] API_REQUEST_AUTH_FAILED', {
+        timestamp: new Date().toISOString(),
+        url: config.url,
+        error: errorMessage,
+      });
+
+      // Reject the request - return to login
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth/signin?error=auth_required';
+      }
+
+      return Promise.reject(error);
     }
-    
-    // Add JWT token if available
-    if (session?.accessToken) {
-      config.headers.Authorization = `Bearer ${session.accessToken}`;
-    }
-  } catch (error) {
-    console.error('[API] Failed to get session for request:', error);
-    // Log to audit trail for security monitoring
-    console.log('[AUDIT] API_REQUEST_AUTH_FAILED', {
-      timestamp: new Date().toISOString(),
-      url: config.url,
-      error: error.message
-    });
+  },
+  (error) => {
+    console.error('[API] Request interceptor error:', error);
+    return Promise.reject(error);
   }
-  return config;
-});
+);
+
+// Add response interceptor to handle 401/403 errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      console.error('[API] Authentication/Authorization failed:', error.response.status);
+
+      // Redirect to signin on auth failure
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth/signin?error=unauthorized';
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 // Action Layer API Client
 export class ActionAPI {
