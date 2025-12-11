@@ -56,7 +56,7 @@ gcloud run deploy qms-agent \
     --source . \
     --region "$REGION" \
     --platform managed \
-    --allow-unauthenticated \
+    --no-allow-unauthenticated \
     --set-env-vars PROJECT_ID="$PROJECT_ID",DATA_STORE_ID="$DATA_STORE_ID",DATA_STORE_LOCATION="$DATA_STORE_LOCATION",REGION="$REGION",OPENAI_API_KEY="$OPENAI_API_KEY" \
     --memory 2Gi \
     --cpu 2 \

@@ -1,0 +1,67 @@
+DESIGN HISTORY FILE (DHF) PACKAGE MANIFEST
+==========================================
+
+Document ID: DHF-QMS-AGENT-v1.0-PHASE5
+Package Date: December 10, 2025
+Retention Period: Device Life + 7 Years (ISO 13485:2016)
+Classification: CONTROLLED DOCUMENT
+
+PHASE 4C/4D ARTIFACTS:
+├── PHASE4C-4D-CLOSEOUT.md (411 lines)
+├── PHASE4-SIGNOFF-CHECKLIST.md (240 lines)  
+├── QA-VALIDATION-PHASE4C-4D.md (452 lines)
+├── portal/src/components/AIAssistant.tsx (2,513 lines total portal code)
+├── portal/src/lib/openai.ts (LLM integration)
+└── portal/src/ai/ (conversation management)
+
+PHASE 5 VALIDATION ARTIFACTS:
+├── PHASE5-VALIDATION-PROTOCOL.md (930 lines)
+├── PHASE5-FINAL-VALIDATION-REPORT.md (472 lines)
+├── PHASE5-QA-SIGN-OFF-FORM.md (200 lines)
+├── PHASE5-TEST-EXECUTION-TRACKER.md (300 lines)
+├── PHASE5-EXECUTION-LOG-TEMPLATE.md (100 lines)
+├── PHASE5-EVIDENCE-DIRECTORY-STRUCTURE.md (150 lines)
+└── PHASE5-DEVIATION-RESOLUTIONS.md (deviation tracking)
+
+REMEDIATION ARTIFACTS:
+├── POST-REMEDIATION-AUDIT-REPORT.md (this document)
+├── portal/src/middleware.ts (29 lines - RBAC enforcement)
+├── portal/src/lib/conversationManager.ts (33 lines - type safety)
+├── device/src/auth_middleware.py (29 lines - JWT validation)
+├── device/src/requirements.txt (10 pinned dependencies)
+└── Modified: portal/src/lib/api.ts, portal/src/components/AIAssistant.tsx, device/src/app.py
+
+DEPLOYMENT ARTIFACTS:
+├── DEPLOYMENT-SUMMARY-v1.0-PROD.md (450 lines)
+├── ISO-13485-ARTIFACTS-MANIFEST.md (300 lines)
+├── release-manifest-v1.0.json (610 lines)
+├── portal/Dockerfile (production container)
+├── portal/.dockerignore (security exclusions)
+└── scripts/deploy.sh (Cloud Run deployment)
+
+TRACEABILITY MATRIX:
+- Requirements: documentation/DHF/requirements/Req-*.md
+- Design Outputs: portal/src/, device/src/
+- Verification: device/tests/ (31/31 passing)
+- Validation: documentation/DHF/validation/
+- Risk Management: documentation/DHF/risk-management/
+
+ARCHIVE LOCATIONS:
+- Git Repository: iso-13485-hybrid-qms-agent
+- Production Tag: v1.0-phase5-prod-2025-12-10
+- DHF Archive: documentation/DHF/
+- DMR Archive: documentation/DMR/releases/
+
+COMPLIANCE ATTESTATION:
+☐ QA Manager Review Complete
+☐ Compliance Lead Approval
+☐ Engineering Sign-off
+☐ 7-Year Retention Scheduled
+☐ Change Control Updated
+
+NEXT ACTIONS:
+1. QA/Compliance sign FINAL-BUILD-TAG.txt
+2. Create production git tag
+3. Archive DHF package per ISO 13485
+4. Update traceability matrices
+5. Schedule retention review (2032-12-10)

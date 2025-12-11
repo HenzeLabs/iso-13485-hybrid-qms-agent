@@ -1,0 +1,46 @@
+# Core Framework
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+pydantic==2.10.3
+pydantic-settings==2.6.1
+
+# Google Cloud Dependencies
+google-cloud-aiplatform==1.71.1
+google-cloud-discoveryengine==0.13.11
+google-cloud-bigquery==3.27.0
+google-cloud-storage==2.19.0
+google-auth==2.36.0
+google-api-core==2.23.0
+
+# OpenAI
+openai==1.57.2
+
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.20
+cryptography==44.0.0
+
+# Utilities
+python-dotenv==1.0.1
+httpx==0.28.1
+requests==2.32.3
+
+# Testing (optional - for development)
+pytest==8.3.4
+pytest-asyncio==0.24.0
+pytest-cov==6.0.0
+
+# Type Checking (optional - for development)
+mypy==1.13.0
+types-requests==2.32.0.20241016
+
+# Linting (optional - for development)
+ruff==0.8.4
+black==24.10.0
+
+# Production WSGI Server (if not using uvicorn)
+gunicorn==23.0.0
+
+# Monitoring (optional)
+prometheus-client==0.21.0
